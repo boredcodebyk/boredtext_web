@@ -1,4 +1,6 @@
 <script>
+  // @ts-nocheck
+
   import "carbon-components-svelte/css/all.css";
 
   import {
@@ -14,50 +16,35 @@
     SideNavMenuItem,
     SideNavLink,
     SkipToContent,
-    Content,
-    Grid,
-    Row,
-    Column,
-    TileGroup,
-    RadioTile,
+    Theme,
   } from "carbon-components-svelte";
   import { expoIn } from "svelte/easing";
 
-  let theme = ["white", "g10", "g80", "g90", "g100"];
+  let theme_array = ["white", "g10", "g80", "g90", "g100"];
 
-  $: document.documentElement.setAttribute("theme", theme[1]);
+  let theme = "g10";
 
   let isSideNavOpen = false;
   let isOpen = false;
-  let selected = "0";
-  let transitions = {
-    "0": {
-      text: "Default (duration: 200ms)",
-      value: { duration: 200 },
-    },
-    "1": {
-      text: "Custom (duration: 600ms, delay: 50ms, easing: expoIn)",
-      value: { duration: 600, delay: 50, easing: expoIn },
-    },
-    "2": {
-      text: "Disabled",
-      value: false,
-    },
-  };
 </script>
 
-<Header 
-persistentHamburgerMenu={true} company="IBM" platformName="Carbon Svelte" bind:isSideNavOpen>
+<Theme bind:theme persist persistKey="__carbon-theme" />
+<Header
+  persistentHamburgerMenu={true}
+  company="boredtext"
+  platformName=""
+  bind:isSideNavOpen
+>
   <svelte:fragment slot="skip-to-content">
     <SkipToContent />
   </svelte:fragment>
   <HeaderUtilities>
-    <HeaderAction bind:isOpen transition={{duration: 200}}>
+    <HeaderAction bind:isOpen transition={{ duration: 200 }}>
       <HeaderPanelLinks>
         <HeaderPanelDivider>Switcher subject 1</HeaderPanelDivider>
         <HeaderPanelLink>Switcher item 1</HeaderPanelLink>
-        <HeaderPanelDivider>Switcher subject 2</HeaderPanelDivider>
-        <HeaderPanelLink>Switcher item 1</HeaderPanelLink>
+        <HeaderPanelDivider>Theme</HeaderPanelDivider>
+        
         <HeaderPanelLink>Switcher item 2</HeaderPanelLink>
         <HeaderPanelLink>Switcher item 3</HeaderPanelLink>
         <HeaderPanelLink>Switcher item 4</HeaderPanelLink>
@@ -79,18 +66,4 @@ persistentHamburgerMenu={true} company="IBM" platformName="Carbon Svelte" bind:i
     </SideNavMenu>
   </SideNavItems>
 </SideNav>
-
-<Content>
-  <Grid>
-    <Row>
-      <Column>
-        <h1>HeaderSwitcher</h1>
-        <p>
-          Select a transition option below and click on the App Switcher icon in
-          the top right.
-        </p>
-       
-      </Column>
-    </Row>
-  </Grid>
-</Content>
+<slot />
