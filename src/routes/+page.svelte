@@ -28,7 +28,7 @@
       };
     }
   });
-let err: string;
+
   const newNote = async () => {
     let id = crypto.randomUUID();
     let note: notejson = {
@@ -40,10 +40,9 @@ let err: string;
     };
     try {
       let i = await db.notes.add(note);
-      console.log(`Created successfully added. Got id ${i}`);
+      // console.log(`Created successfully added. Got id ${i}`);
     } catch (error) {
-      console.log(`Error\n ${error}`);
-      err = `Error\n ${error}`
+      // console.log(`Error\n ${error}`);
     }
     goto(`/note/${id}`);
   };
@@ -53,7 +52,7 @@ let err: string;
   <Grid>
     <Row>
       <Column>
-        <h1>Welcome User!</h1><p>{err}</p>
+        <h1>Welcome User!</h1>
         <br />
         <Button icon={Add} on:click={() => newNote()}>New</Button>
       </Column>
@@ -61,9 +60,14 @@ let err: string;
     <Row>
       <Column>
         {#if $noteslist}<ul>
-          {#each $noteslist as note (note.id)}
-            <li><Link href="/note/{note.id}">{note.title}, {note.dateModified}</Link></li>
-          {/each}</ul>
+            {#each $noteslist as note (note.id)}
+              <li>
+                <Link href="/note/{note.id}"
+                  >{note.title}, {note.dateModified}</Link
+                >
+              </li>
+            {/each}
+          </ul>
         {/if}
       </Column>
     </Row>

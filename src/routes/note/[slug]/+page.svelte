@@ -128,7 +128,7 @@
       EditorView.updateListener.of((update: { docChanged: any }) => {
         if (update.docChanged) {
           saveNote(getText());
-          console.log(getText());
+          // console.log(getText());
         }
       }),
     ];
@@ -162,7 +162,7 @@
         dateCreated: new Date(Date.now()),
         dateModified: new Date(Date.now()),
       };
-    console.log(note);
+    // console.log(note);
     initEditor(note.note);
     
   });

@@ -7,7 +7,7 @@ import { get } from 'svelte/store';
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ params }) {
-    console.log(params.slug)
+    // console.log(params.slug)
     const note = await db.notes.where("id").equals(params.slug).first();
 
     if (note) {
