@@ -11,28 +11,48 @@
     HeaderPanelDivider,
     HeaderPanelLink,
     SideNav,
+    SideNavDivider,
     SideNavItems,
-    SideNavMenu,
-    SideNavMenuItem,
     SideNavLink,
     SkipToContent,
     Theme,
   } from "carbon-components-svelte";
-  import { expoIn } from "svelte/easing";
+  
+  import { goto } from "$app/navigation";
+  import { notedata } from "$lib/store";
+  import { page } from "$app/stores";
+  import { Document, Home } from "carbon-icons-svelte";
+  import { version } from "$app/environment";
 
-  let theme_array = ["white", "g10", "g80", "g90", "g100"];
+  let themes = ["white", "g10", "g80", "g90", "g100"];
 
   let theme = "g10";
 
   let isSideNavOpen = false;
   let isOpen = false;
+
+  let smallDevice = false;
+
+  const attachListener = () => {
+    const mediaQuery = window.matchMedia("(width <= 640px)");
+    mediaQuery.addEventListener("change", ({ matches }) => {
+      smallDevice = matches;
+    });
+  };
+
+  $: filename =
+    $page.route.id === "/note/[slug]"
+      ? $notedata.find((e) => e.id === $page.params.slug)?.title ?? ""
+      : "";
 </script>
 
+<svelte:window use:attachListener />
 <Theme bind:theme persist persistKey="__carbon-theme" />
 <Header
-  persistentHamburgerMenu={true}
+  href="/"
+  persistentHamburgerMenu={false}
   company="boredtext"
-  platformName=""
+  platformName={smallDevice ? filename.substring(0, 10) + "..." : filename}
   bind:isSideNavOpen
 >
   <svelte:fragment slot="skip-to-content">
@@ -41,29 +61,54 @@
   <HeaderUtilities>
     <HeaderAction bind:isOpen transition={{ duration: 200 }}>
       <HeaderPanelLinks>
-        <HeaderPanelDivider>Switcher subject 1</HeaderPanelDivider>
-        <HeaderPanelLink>Switcher item 1</HeaderPanelLink>
         <HeaderPanelDivider>Theme</HeaderPanelDivider>
-        
-        <HeaderPanelLink>Switcher item 2</HeaderPanelLink>
-        <HeaderPanelLink>Switcher item 3</HeaderPanelLink>
-        <HeaderPanelLink>Switcher item 4</HeaderPanelLink>
-        <HeaderPanelLink>Switcher item 5</HeaderPanelLink>
+        {#each themes as value (value)}
+          <HeaderPanelLink
+            disabled={theme === value}
+            on:click={() => (theme = value)}
+          >
+            {`${value}`}
+          </HeaderPanelLink>
+        {/each}
       </HeaderPanelLinks>
     </HeaderAction>
   </HeaderUtilities>
-</Header>
 
-<SideNav bind:isOpen={isSideNavOpen}>
-  <SideNavItems>
-    <SideNavLink text="Link 1" />
-    <SideNavLink text="Link 2" />
-    <SideNavLink text="Link 3" />
-    <SideNavMenu text="Menu">
-      <SideNavMenuItem href="/" text="Link 1" />
-      <SideNavMenuItem href="/" text="Link 2" />
-      <SideNavMenuItem href="/" text="Link 3" />
-    </SideNavMenu>
-  </SideNavItems>
-</SideNav>
+  <SideNav bind:isOpen={isSideNavOpen} rail={!smallDevice}>
+    <SideNavItems
+      ><SideNavLink
+        icon={Home}
+        href="/"
+        text="Home"
+        isSelected={$page.route.id === "/"}
+      />
+      <SideNavDivider />
+      {#if $notedata}
+        {#each $notedata as note (note.id)}
+          <SideNavLink
+            icon={Document}
+            text={note.title}
+            on:click={(e) =>
+              goto(`/note/${note.id}`, { replaceState: $page.route.id != "/" })}
+            isSelected={$page.params.slug === note.id}
+          />
+        {/each}
+      {/if}
+    </SideNavItems>
+  </SideNav>
+</Header>
 <slot />
+<p
+  style="display: flex;
+align-items: end;
+justify-content: end;
+font-style: italic;
+opacity: 0.01;
+padding-inline-end: 0.875rem;
+position: fixed;
+bottom: 0;
+right: 0;
+padding-bottom: 0.875rem;"
+>
+  v{version}
+</p>

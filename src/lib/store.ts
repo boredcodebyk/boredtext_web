@@ -10,8 +10,8 @@ export interface notejson {
     id: string,
     title: string,
     note: string,
-    dateCreated: Date,
-    dateModified: Date,
+    dateCreated: string,
+    dateModified: string,
 }
 
 export const appdata = persisted("__app", <appjson>{
@@ -19,3 +19,5 @@ export const appdata = persisted("__app", <appjson>{
     commit: "",
     username: "",
 })
+
+export const notedata = persisted("__notedata",<notejson[]>[])
